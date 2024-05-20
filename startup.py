@@ -45,16 +45,16 @@ def parse_domain():
     # Set up command line argument parser
     parser = argparse.ArgumentParser(description='Process some input.')
     parser.add_argument('--domain', type=int,
-                        help='domain to use for the application (default: mokh32.com)')
+                        help='domain to use for the application (default: vlms.mokh32.com)')
     # Parse the arguments
     args = parser.parse_args()
 
     # If the domain is not provided in the command line arguments, prompt the user
     if args.domain is None:
-        domain = input("domain (default: mokh32.com): ")
+        domain = input("domain (default: vlms.mokh32.com): ")
         try:
             if domain == "":
-                domain = "mokh32.com"
+                domain = "vlms.mokh32.com"
             domain = str(domain)
             print(f"domain is set to {domain}. You must open ports 9092, 9093, 9094 for {domain} from your firewall settings.")
         except ValueError:
@@ -66,22 +66,22 @@ def parse_domain():
     return domain
 
 
-# def run_script(domain="mokh32.com"):
+# def run_script(domain="vlms.mokh32.com"):
 
-def run_consumer(domain="mokh32.com"):
+def run_consumer(domain="vlms.mokh32.com"):
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "consumer")
     os.chdir(path)
     _consumer.run(domain)
 
 
-def run_producer(domain="mokh32.com"):
+def run_producer(domain="vlms.mokh32.com"):
     path = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), "producerclient")
     os.chdir(path)
     return _producer_client.run(domain)
 
 
-def run_kafkakraft(domain="mokh32.com"):
+def run_kafkakraft(domain="vlms.mokh32.com"):
     path = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), "kafkakraft")
     os.chdir(path)
