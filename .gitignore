@@ -1,5 +1,8 @@
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
-
+#Python
+*.pyc
+*.pyo
+__pycache__/
 # Logs
 
 logs
