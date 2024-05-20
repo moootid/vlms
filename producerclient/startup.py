@@ -3,8 +3,32 @@ import platform
 import subprocess
 import argparse
 
-from pick import pick
+try:
+    def install_dependencies():
+        os_type = platform.system()
+        if os_type == "Windows":
+            script = os.path.join(os.path.dirname(
+                os.path.abspath(__file__)), "install_dep.bat")
+            print(f"Running {script}")
+            command = [script]
+        else:
+            script = "./install_dep.sh"
+            command = ["bash", script]
+        if os.path.exists(script):
+            try:
+                subprocess.run(command, check=True)
+                print(f"Successfully ran {script}.")
+            except subprocess.CalledProcessError as e:
+                print(f"Failed to run {script}. Error: {e}")
+        else:
+            print(f"Script {script} does not exist.")
 
+
+    install_dependencies()
+
+    from pick import pick
+except ImportError:
+    print("Error: Required module 'pick' not found. Please run 'pip install pick' to install it.")
 
 def update_env_file(env, value):
     env_file = '.env'
@@ -135,8 +159,7 @@ def parse_domain(domain="mokh32.com"):
         if domain == "":
             domain = "mokh32.com"
         domain = str(domain)
-        print(f"domain is set to {domain}. You must open ports 9092, 9093, 9094 for {
-            domain} from your firewall settings.")
+        print(f"domain is set to {domain}. You must open ports 9092, 9093, 9094 for {domain} from your firewall settings.")
     except ValueError:
         print("Invalid input. Please enter an integer value.")
         return

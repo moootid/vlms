@@ -1,12 +1,12 @@
 import argparse
 import sys
-from pick import pick
 import subprocess
 from consumer import startup as _consumer
 from producerclient import startup as _producer_client
 import os
 import platform
 from kafkakraft import startup as _kafkakraft
+
 
 def install_dependencies():
     os_type = platform.system()
@@ -30,6 +30,7 @@ def install_dependencies():
 
 install_dependencies()
 
+from pick import pick
 
 def choose_run_mode():
     title = 'Please choose the run mode: '
@@ -55,8 +56,7 @@ def parse_domain():
             if domain == "":
                 domain = "mokh32.com"
             domain = str(domain)
-            print(f"domain is set to {domain}. You must open ports 9092, 9093, 9094 for {
-                domain} from your firewall settings.")
+            print(f"domain is set to {domain}. You must open ports 9092, 9093, 9094 for {domain} from your firewall settings.")
         except ValueError:
             print("Invalid input. Please enter an integer value.")
             return
@@ -80,22 +80,25 @@ def run_producer(domain="mokh32.com"):
     os.chdir(path)
     return _producer_client.run(domain)
 
+
 def run_kafkakraft(domain="mokh32.com"):
     path = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), "kafkakraft")
     os.chdir(path)
     return _kafkakraft.run(domain)
 
+
 def open_browser(url):
-    if sys.platform =='win32':
+    if sys.platform == 'win32':
         os.startfile(url)
-    elif sys.platform =='darwin':
+    elif sys.platform == 'darwin':
         subprocess.Popen(['open', url])
     else:
         try:
             subprocess.Popen(['xdg-open', url])
         except OSError:
-            print ('Please open a browser on: '+url)
+            print('Please open a browser on: '+url)
+
 
 if __name__ == "__main__":
     # ['Consumer & Producer (Recommended)','On Cloud', 'Fully local (Not recommended)']

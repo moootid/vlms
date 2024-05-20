@@ -11,8 +11,7 @@ command -v pip >/dev/null 2>&1 || error_exit "pip is not installed. Please insta
 
 # Install pick
 pip install pick || error_exit "Failed to install pick. Please check your network connection and try again."
-#if error occurs, print error message and exit
-# If an error occurs, print error message and exit
+
 if [ $? -ne 0 ]; then
     pip3 install pick || error_exit "Failed to install pick. Please check your network connection and try again."
 fi

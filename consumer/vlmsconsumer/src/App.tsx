@@ -18,7 +18,7 @@ function App() {
     reconnectInterval: 3000, // Retry connection every 3 seconds
   });
   const [avgLatency, setAvgLatency] = useState<number>(0);
-  const MINUTE_MS = 50000;
+  const MINUTE_MS = 3500;
   const [map, setMap] = useState<boolean>(true);
   useEffect(() => {
     console.log(socketUrl);
@@ -66,13 +66,13 @@ function App() {
     popupAnchor: [0, -48],
   });
   const calculateAverageLatency = () => {
+    console.log("calculating average latency");
     let data = positions
     if (data.length === 0) {
       // setAvgLatency(0);
       return;
     }
     console.log("Data: ", data);
-    console.log("calculating average latency")
     let sum = 0;
     for (let i = 0; i < data.length; i++) {
       sum += data[i].latency;
