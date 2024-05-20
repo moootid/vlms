@@ -4,6 +4,7 @@ services:
     image: confluentinc/cp-kafka
     container_name: kafka1
     hostname: kafka1
+    restart: always
     ports:
       - "9092:9092"
     environment:
@@ -26,6 +27,7 @@ services:
     image: confluentinc/cp-kafka
     container_name: kafka2
     hostname: kafka2
+    restart: always
     ports:
       - "9093:9093"
     environment:
@@ -47,6 +49,7 @@ services:
     image: confluentinc/cp-kafka
     container_name: kafka3
     hostname: kafka3
+    restart: always
     ports:
       - "9094:9094"
     environment:
@@ -69,6 +72,7 @@ services:
     image: confluentinc/cp-schema-registry
     container_name: schema-registry
     hostname: schema-registry
+    restart: always
     ports:
       - "8081:8081"
     environment:

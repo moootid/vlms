@@ -7,18 +7,27 @@ import icon from "./assets/car.png";
 import L from 'leaflet';
 
 function App() {
-  const [positions, setPositions] = useState([{ id: 'one', data: [52.014, -0.025] }]);
+  const [positions, setPositions] = useState<any>([]);
+  const defaultPosition = [52.014, -0.025];
   const ws_port = process.env.WS_PORT || 8080;
-  console.log("WebSocket Port: ", ws_port);
-  const ws_host = process.env.WS_HOST || 'localhost';
   const socketUrl = 'ws://localhost:' + ws_port;
-  console.log("WebSocket URL: ", socketUrl);
-
+  const map_zoom = 4;
   const { lastMessage, readyState } = useWebSocket(socketUrl, {
     shouldReconnect: () => true, // Automatically reconnect on close
     reconnectAttempts: 10, // Limit number of reconnect attempts
     reconnectInterval: 3000, // Retry connection every 3 seconds
   });
+  const [avgLatency, setAvgLatency] = useState<number>(0);
+  const MINUTE_MS = 50000;
+  const [map, setMap] = useState<boolean>(true);
+  useEffect(() => {
+    console.log(socketUrl);
+    const interval = setInterval(() => {
+      calculateAverageLatency();
+    }, MINUTE_MS);
+
+    return () => clearInterval(interval);
+  }, []);
 
 
   useEffect(() => {
@@ -26,6 +35,7 @@ function App() {
 
       try {
         const data = JSON.parse(lastMessage.data);
+        // console.log(data);
         setPositions(data);
       } catch (error) {
         console.error('Failed to parse WebSocket message data:', error);
@@ -55,9 +65,28 @@ function App() {
     iconAnchor: [24, 48],
     popupAnchor: [0, -48],
   });
+  const calculateAverageLatency = () => {
+    let data = positions
+    if (data.length === 0) {
+      // setAvgLatency(0);
+      return;
+    }
+    console.log("Data: ", data);
+    console.log("calculating average latency")
+    let sum = 0;
+    for (let i = 0; i < data.length; i++) {
+      sum += data[i].latency;
+    }
+    console.log("Sum: ", sum);
+    console.log("Length: ", data.length);
+    let avg = sum / data.length;
+    setAvgLatency(parseFloat(avg.toFixed(3)));
+    console.log("Average Latency: ", avg);
+    // return 0;
+  };
   const renderMarkers = useCallback(() => {
 
-    return positions.map((position) => (
+    return positions.map((position: any) => (
       <Marker key={position.id} position={[position.data[0], position.data[1]]} icon={customIcon} >
         <Popup>{position.id}</Popup>
       </Marker>
@@ -65,13 +94,27 @@ function App() {
   }, [positions]);
 
   return (
-    <MapContainer center={[positions[0].data[0], positions[0].data[1]]} zoom={8} scrollWheelZoom={true}>
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-      />
-      {renderMarkers()}
-    </MapContainer>
+    <>
+      <h1>Vehicle Location Monitoring System</h1>
+      <h2>Number of Vehicles: {positions.length}</h2>
+      <h2>Average Latency: {avgLatency} Milliseconds</h2>
+      <button className='button-9' onClick={calculateAverageLatency} >Recalculate latency</button>
+      <p>For faster calcualtion in chios mode disable the map</p>
+      {map ?
+        <button className='button-9' onClick={() => setMap(!map)} >Disable Map</button>
+        :
+        <button className='button-9' onClick={() => setMap(!map)} >Enable Map</button>
+      }
+      {map ?
+        <MapContainer center={[defaultPosition[0], defaultPosition[1]]} zoom={map_zoom} scrollWheelZoom={true}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+          />
+          {renderMarkers()}
+        </MapContainer>
+        : ""}
+    </>
   );
 }
 

@@ -22,14 +22,7 @@ let numberOfKeys = Number(Bun.env.NUMBER_OF_KEYS) || 1;
 for (let i = 1; i <= numberOfKeys; i++) {
   KEYS.push(`key-${systemId}-${i}`);
 }
-console.log('Keys:', KEYS);
-console.log("number of keys", numberOfKeys)
-console.log("length of keys", KEYS.length)
-console.log("interval", INTERVAL_MS)
-console.log("latMin", COORDINATE_RANGE.latMin)
-console.log("latMax", COORDINATE_RANGE.latMax)
-console.log("longMin", COORDINATE_RANGE.longMin)
-console.log("longMax", COORDINATE_RANGE.longMax)
+
 
 const createProducer = () => {
   return kafka.producer({
@@ -45,10 +38,10 @@ const generateMessage = () => {
   const lat = generateRandomCoordinate(COORDINATE_RANGE.latMin, COORDINATE_RANGE.latMax);
   const long = generateRandomCoordinate(COORDINATE_RANGE.longMin, COORDINATE_RANGE.longMax);
   const id = Math.floor(Math.random() * KEYS.length);
-
+  const now = new Date().toISOString();
   return {
     key: KEYS[id],
-    value: `${long}, ${lat}`,
+    value: `${lat},${long},${now}`,
   };
 };
 
@@ -69,7 +62,7 @@ const sendMessage = async (producer:any, message:any) => {
 const locator = async () => {
   const producer = createProducer();
   const message = generateMessage();
-  console.log('Generated message:', message);
+  // console.log('Generated message:', message);
   await sendMessage(producer, message);
 };
 

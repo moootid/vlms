@@ -15,4 +15,5 @@ else
     echo "Docker image built and started successfully."
   else
     echo "Docker image build failed."
+  fi
 fi

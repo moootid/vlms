@@ -25,37 +25,49 @@ async function runConsumer() {
         brokers: brokersUri,
     });
 
-    let vehicleData = [
-        {
-            id: "one",
-            data: [52.504, -0.09]
-        }
+    let vehicleData:any = [
     ];
-    console.log("Consumer ID: ", uuidGroup)
+    // console.log("Consumer ID: ", uuidGroup)
     const consumer = kafka.consumer({ groupId: uuidGroup });
 
     await consumer.connect();
     await consumer.subscribe({ topics: ['testing-topic'], fromBeginning: false });
 
-    console.log("-------------------------------");
-
+    // console.log("-------------------------------");
+    function calculateTimeDelta(dateString: string): number {
+        // console.log(dateString);
+        // Create a Date object for the given date
+        const givenDate = new Date(dateString);
+    
+        // Create a Date object for the current date
+        const now = new Date();
+    
+        // Calculate the difference in milliseconds
+        const differenceInMilliseconds = now.getTime() - givenDate.getTime();
+    
+        // Return the difference in milliseconds
+        return differenceInMilliseconds;
+    }
     const messageSerializer = (msg: any) => {
-        console.log(vehicleData);
+        // console.log(vehicleData);
         if (msg.key && msg.value) {
+            let arr_msg = msg.value.toString().split(',');
+            // console.log(arr_msg);
             const coordinates = {
                 id: msg.key.toString(),
-                data: msg.value.toString().split(',').map(Number)
+                data: [Number(arr_msg[0]), Number(arr_msg[1])],
+                latency: calculateTimeDelta(arr_msg[2])
             };
-            console.log(coordinates);
+            // console.log(coordinates);
 
-            const index = vehicleData.findIndex(item => item.id === coordinates.id);
+            const index = vehicleData.findIndex((item:any) => item.id === coordinates.id);
             if (index !== -1) {
                 vehicleData[index].data = coordinates.data;
             } else {
                 vehicleData.push(coordinates);
             }
 
-            console.log(vehicleData);
+            // console.log(vehicleData);
         }
         return {
             key: msg.key.toString(),
@@ -66,10 +78,10 @@ async function runConsumer() {
     await consumer.run({
         partitionsConsumedConcurrently: 1,
         eachMessage: async ({ topic, partition, message }: any) => {
-            console.log(message.key.toString());
-            console.log({
-                value: message.value.toString()
-            });
+            // console.log(message.key.toString());
+            // console.log({
+            //     value: message.value.toString()
+            // });
             messageSerializer(message);
             clients.forEach((client: any) => {
                 if (client.readyState === 1) {  // 1 is the OPEN state
@@ -82,7 +94,7 @@ async function runConsumer() {
 
 function WebSocketServer() {
     // Create WebSocket server using Bun.serve
-    console.log(Bun.env.PORT)
+    // console.log(Bun.env.PORT)
     let port = parseInt(Bun.env.PORT || '8080');
     Bun.serve({
         port: port,
