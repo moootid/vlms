@@ -96,6 +96,8 @@ function App() {
   return (
     <>
       <h1>Vehicle Location Monitoring System</h1>
+      <h2>By Mohammed Almalki</h2>
+      <a href="https://github.com/moootid/vlms">GitHub Repo</a>
       <h2>Number of Vehicles: {positions.length}</h2>
       <h2>Average Latency: {avgLatency} Milliseconds</h2>
       <button className='button-9' onClick={calculateAverageLatency} >Recalculate latency</button>
