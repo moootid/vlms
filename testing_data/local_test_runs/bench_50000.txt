@@ -1,0 +1,6 @@
+50000 records sent, 1000.020000 records/sec (0.38 MB/sec), 1.04 ms avg latency, 335.00 ms max latency, 1 ms 50th, 1 ms 95th, 2 ms 99th, 22 ms 99.9th.
+producer-metrics:batch-size-avg:{client-id=perf-producer-client}                            : 920.858
+producer-metrics:bufferpool-wait-ratio:{client-id=perf-producer-client}                     : 0.000
+producer-metrics:outgoing-byte-rate:{client-id=perf-producer-client}                        : 467638.933
+producer-metrics:record-queue-time-avg:{client-id=perf-producer-client}                     : 0.031
+producer-metrics:request-latency-avg:{client-id=perf-producer-client}                       : 0.926
